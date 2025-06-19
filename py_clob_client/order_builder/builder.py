@@ -315,7 +315,8 @@ class OrderBuilder:
         print(f"taker_amount: {taker_amount} (type: {type(taker_amount)})")
         print(f"side: {side} (type: {type(side)})")
         print(f"self.sig_type: {self.sig_type} (type: {type(self.sig_type)})")
-
+        print(f"[DEBUG] self.sig_type: {self.sig_type} == EOA? {self.sig_type == EOA}")
+        print(f"[DEBUG] EOA value: {EOA}, Type: {type(EOA)}")
 
         data = OrderData(
             maker=self.funder,
@@ -423,6 +424,11 @@ class OrderBuilder:
         print(f"expiration: {data.expiration}")
         print(f"signatureType: {data.signatureType}")
 
+        print(f"[VAL] feeRateBps valid? {data.feeRateBps.isnumeric()}")
+        print(f"[VAL] nonce valid? {data.nonce.isnumeric()}")
+        print(f"[VAL] expiration valid? {data.expiration.isnumeric()}")
+        print(f"[VAL] signatureType valid? {data.signatureType} in {[EOA, POLY_GNOSIS_SAFE, POLY_PROXY]}")
+        print(f"[VAL] side valid? {data.side} in {[BUY, SELL]}")
         order = order_builder.build_order(data)
         order_hash = order_builder._create_struct_hash(order)
         
