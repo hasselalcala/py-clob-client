@@ -300,12 +300,13 @@ class OrderBuilder:
         """
         Creates order data with a custom signer (for NEAR Chain Signatures integration)
         """
-        side, maker_amount, taker_amount = self.get_market_order_amounts(
+        side_enum, maker_amount, taker_amount = self.get_market_order_amounts(
             order_args.side,
             order_args.amount,
             order_args.price,
             ROUNDING_CONFIG[options.tick_size],
         )
+        side = str(side_enum)
 
         print(f"\n[DEBUG] Valores antes de crear OrderData:")
         print(f"order_args.token_id: {order_args.token_id} (type: {type(order_args.token_id)})")
