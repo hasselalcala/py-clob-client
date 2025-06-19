@@ -327,7 +327,7 @@ class OrderBuilder:
             nonce=str(order_args.nonce),
             signer=custom_signer,  # Use custom signer (MPC derived address)
             expiration="0",
-            signatureType=str(self.sig_type),
+            signatureType=self.sig_type,
         )
         
         return data
