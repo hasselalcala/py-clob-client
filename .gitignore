@@ -187,3 +187,6 @@ near_chain_signatures_example.py
 near_chain_signatures_flow.py
 test_mpc_address.py
 test_mpc_integration.py
+
+main_fixed.py
+mpc_ota_generator.py
