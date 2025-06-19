@@ -306,7 +306,7 @@ class OrderBuilder:
             order_args.price,
             ROUNDING_CONFIG[options.tick_size],
         )
-        side = str(enum_side)
+        side = BUY if enum_side == UtilsBuy else SELL
 
 
         print(f"\n[DEBUG] Valores antes de crear OrderData:")
