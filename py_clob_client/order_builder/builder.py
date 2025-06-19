@@ -316,16 +316,17 @@ class OrderBuilder:
         print(f"side: {side} (type: {type(side)})")
         print(f"self.sig_type: {self.sig_type} (type: {type(self.sig_type)})")
 
+
         data = OrderData(
             maker=self.funder,
             taker=order_args.taker,
-            tokenId=str(order_args.token_id),
+            tokenId=order_args.token_id,
             makerAmount=str(maker_amount),
             takerAmount=str(taker_amount),
             side=side,
             feeRateBps=str(order_args.fee_rate_bps),
             nonce=str(order_args.nonce),
-            signer=custom_signer,  # Use custom signer (MPC derived address)
+            signer=custom_signer,
             expiration="0",
             signatureType=self.sig_type,
         )
