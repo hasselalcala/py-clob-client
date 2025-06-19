@@ -342,7 +342,7 @@ class OrderBuilder:
         data = self.create_market_order_data_with_custom_signer(order_args, options, custom_signer)
         
         contract_config = get_contract_config(
-            self.signer.get_chain_id(), options.neg_risk
+            137, options.neg_risk
         )
 
         # Create a custom OrderBuilder that bypasses signer validation
