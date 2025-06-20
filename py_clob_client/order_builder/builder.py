@@ -391,6 +391,15 @@ class OrderBuilder:
                 if data.signatureType is None:
                     data.signatureType = EOA
 
+
+                print(f"[DEBUG] data.side: {data.side} and type: {type(data.side)}")
+                if data.side == BUY:
+                    data.side = 0
+                elif data.side == SELL:
+                    data.side = 1
+                else:
+                    raise ValidationException("Invalid side")
+
                 return Order(
                     salt=int(self.salt_generator()),
                     maker=normalize_address(data.maker),
