@@ -15,7 +15,9 @@ from .helpers import (
     decimal_places,
     round_up,
 )
+
 from .constants import BUY, SELL
+from py_order_utils.model.sides import BUY as BuyConstant, SELL as SellConstant
 from ..config import get_contract_config
 from ..signer import Signer
 from ..clob_types import (
@@ -51,9 +53,10 @@ class OrderBuilder:
     def get_order_amounts(
         self, side: str, size: float, price: float, round_config: RoundConfig
     ):
+        
         raw_price = round_normal(price, round_config.price)
 
-        if side == BUY:
+        if side == BuyConstant:
             raw_taker_amt = round_down(size, round_config.size)
 
             raw_maker_amt = raw_taker_amt * raw_price
@@ -66,7 +69,7 @@ class OrderBuilder:
             taker_amount = to_token_decimals(raw_taker_amt)
 
             return UtilsBuy, maker_amount, taker_amount
-        elif side == SELL:
+        elif side == SellConstant:
             raw_maker_amt = round_down(size, round_config.size)
 
             raw_taker_amt = raw_maker_amt * raw_price
@@ -85,9 +88,10 @@ class OrderBuilder:
     def get_market_order_amounts(
         self, side: str, amount: float, price: float, round_config: RoundConfig
     ):
+        
         raw_price = round_normal(price, round_config.price)
 
-        if side == BUY:
+        if side == UtilsBuy:
             raw_maker_amt = round_down(amount, round_config.size)
             raw_taker_amt = raw_maker_amt / raw_price
             if decimal_places(raw_taker_amt) > round_config.amount:
@@ -97,10 +101,10 @@ class OrderBuilder:
 
             maker_amount = to_token_decimals(raw_maker_amt)
             taker_amount = to_token_decimals(raw_taker_amt)
-
+            
             return UtilsBuy, maker_amount, taker_amount
 
-        elif side == SELL:
+        elif side == UtilsSell:
             raw_maker_amt = round_down(amount, round_config.size)
 
             raw_taker_amt = raw_maker_amt * raw_price
@@ -161,6 +165,7 @@ class OrderBuilder:
         """
         Creates and signs a market order
         """
+     
         side, maker_amount, taker_amount = self.get_market_order_amounts(
             order_args.side,
             order_args.amount,

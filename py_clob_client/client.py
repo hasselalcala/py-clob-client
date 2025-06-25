@@ -414,7 +414,7 @@ class ClobClient:
             if options and options.neg_risk
             else self.get_neg_risk(order_args.token_id)
         )
-
+        
         return self.builder.create_market_order(
             order_args,
             CreateOrderOptions(
