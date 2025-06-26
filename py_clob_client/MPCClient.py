@@ -1,14 +1,14 @@
-from .clob_types import ApiCreds, MarketOrderArgs, PartialCreateOrderOptions, CreateOrderOptions, OrderType, TickSize, OrderBookSummary
+from .clob_types import ApiCreds, MarketOrderArgs, PartialCreateOrderOptions, CreateOrderOptions, OrderType, TickSize, OrderBookSummary, RequestArgs
 from .MPCSigner import MPCSigner
 from .order_builder.MPCBuilder import MPCOrderBuilder
-from .constants import L0, L1, L2, L1_AUTH_UNAVAILABLE
+from .constants import L0, L1, L2, L1_AUTH_UNAVAILABLE, L2_AUTH_UNAVAILABLE
 import logging
-from .headers.MPCheaders import create_level_1_headers
-from .endpoints import CREATE_API_KEY, DERIVE_API_KEY, GET_NEG_RISK, GET_TICK_SIZE, GET_ORDER_BOOK
+from .headers.MPCheaders import create_level_1_headers, create_level_2_headers
+from .endpoints import CREATE_API_KEY, DERIVE_API_KEY, GET_NEG_RISK, GET_TICK_SIZE, GET_ORDER_BOOK, POST_ORDER
 from .http_helpers.helpers import post, get
 from .exceptions import PolyException
 from typing import Optional
-from .utilities import price_valid, is_tick_size_smaller, parse_raw_orderbook_summary
+from .utilities import price_valid, is_tick_size_smaller, parse_raw_orderbook_summary, order_to_json
 
 class MPCClobClient:
     def __init__(
@@ -39,10 +39,10 @@ class MPCClobClient:
         self.creds = None
         
         # Debug
-        print(f"Debug - agent_account: {agent_account}")
-        print(f"Debug - agent_private_key: {'SET' if agent_private_key else 'NOT SET'}")
-        print(f"Debug - agent_near_network: {agent_near_network}")
-        print(f"Debug - path: {path}")
+        # print(f"Debug - agent_account: {agent_account}")
+        # print(f"Debug - agent_private_key: {'SET' if agent_private_key else 'NOT SET'}")
+        # print(f"Debug - agent_near_network: {agent_near_network}")
+        # print(f"Debug - path: {path}")
         
         self.mpc_signer = MPCSigner(
             agent_account, 
@@ -52,10 +52,10 @@ class MPCClobClient:
             chain_id,  # add chain_id
             path  # add path
         ) if agent_account and agent_private_key and agent_near_network and path else None
-        print(f"Debug - mpc_signer created: {self.mpc_signer is not None}")
+        # print(f"Debug - mpc_signer created: {self.mpc_signer is not None}")
         
         self.mode = self._get_client_mode()
-        print(f"Debug - mode: {self.mode}")
+        # print(f"Debug - mode: {self.mode}")
 
         if self.mpc_signer:
             self.builder = MPCOrderBuilder(
@@ -94,10 +94,10 @@ class MPCClobClient:
 
         endpoint = "{}{}".format(self.host, CREATE_API_KEY)
         headers = await create_level_1_headers(self.mpc_signer, nonce)
-        print("\nDebug - Headers created successfully")
+        #print("\nDebug - Headers created successfully creating a key")
 
         creds_raw = post(endpoint, headers=headers)
-        print("\nDebug - Creds raw: ", creds_raw)
+        #print("\nDebug - Creds raw when creating a key: ", creds_raw)
         try:
             creds = ApiCreds(
                 api_key=creds_raw["apiKey"],
@@ -113,10 +113,10 @@ class MPCClobClient:
         """
         Level 1 Poly Auth
         """
-        print("method: assert_level_1_auth")
-        print("mode: ", self.mode)
+        #print("method: assert_level_1_auth")
+        #print("mode: ", self.mode)
         if self.mode < L1:
-            print("L1_AUTH_UNAVAILABLE")
+            #print("L1_AUTH_UNAVAILABLE")
             raise PolyException(L1_AUTH_UNAVAILABLE)
         
     async def derive_api_key(self, nonce: int = None) -> ApiCreds:
@@ -128,10 +128,10 @@ class MPCClobClient:
 
         endpoint = "{}{}".format(self.host, DERIVE_API_KEY)
         headers = await create_level_1_headers(self.mpc_signer, nonce)
-        print("\nDebug - Headers created successfully")
+        #print("\nDebug - Headers created successfully deriving a key")
 
         creds_raw = get(endpoint, headers=headers)
-        print("\nDebug - Creds raw: ", creds_raw)
+        #print("\nDebug - Creds raw when deriving a key: ", creds_raw)
         try:
             creds = ApiCreds(
                 api_key=creds_raw["apiKey"],
@@ -151,7 +151,7 @@ class MPCClobClient:
         self.creds = creds
         self.mode = self._get_client_mode()
 
-    def create_market_order(
+    async def create_market_order(
         self,
         order_args: MarketOrderArgs,
         options: Optional[PartialCreateOrderOptions] = None,
@@ -193,7 +193,7 @@ class MPCClobClient:
             else self.get_neg_risk(order_args.token_id)
         )
         
-        return self.builder.create_market_order(
+        return await self.builder.create_market_order(
             order_args,
             CreateOrderOptions(
                 tick_size=tick_size,
@@ -267,3 +267,22 @@ class MPCClobClient:
         raw_obs = get("{}{}?token_id={}".format(self.host, GET_ORDER_BOOK, token_id))
         return parse_raw_orderbook_summary(raw_obs)
     
+    def post_order(self, order, orderType: OrderType = OrderType.GTC):
+        """
+        Posts the order
+        """
+        self.assert_level_2_auth()
+        body = order_to_json(order, self.creds.api_key, orderType)
+        headers = create_level_2_headers(
+            self.mpc_signer.ota_account,
+            self.creds,
+            RequestArgs(method="POST", request_path=POST_ORDER, body=body),
+        )
+        return post("{}{}".format(self.host, POST_ORDER), headers=headers, data=body)
+
+    def assert_level_2_auth(self):
+        """
+        Level 2 Poly Auth
+        """
+        if self.mode < L2:
+            raise PolyException(L2_AUTH_UNAVAILABLE)

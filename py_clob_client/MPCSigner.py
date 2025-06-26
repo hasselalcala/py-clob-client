@@ -2,6 +2,8 @@ from py_near.account import Account
 import os
 import base64
 import json
+from py_clob_client.MPCHelpers import validate_mpc_signature, reconstruct_signature
+from py_order_utils.utils import prepend_zx
 
 class MPCSigner:
     def __init__(self, account_id: str, private_key: str, network: str, ota_account: str, chain_id: int, path: str):
@@ -32,16 +34,23 @@ class MPCSigner:
             amount=1,
         )
         
-        return self._extract_signature_from_result(result)
+        mpc_signature = self._extract_signature_from_result(result)
+
+        print("mpc_signature from signer: ", mpc_signature)
+
+        # Validate the signature using original MPC values
+        self.ota_account = validate_mpc_signature(message_hash, mpc_signature, self.ota_account)
+
+        signature = reconstruct_signature(mpc_signature)
+        
+        prepend_signature = prepend_zx(signature)
+        
+        return prepend_signature
 
     def _extract_signature_from_result(self, result):
         """Extract the signature from the transaction result"""
-        print(f"Debug - result type: {type(result)}")
-        print(f"Debug - result: {result}")
         
         if hasattr(result, 'status'):
-            print(f"Debug - result.status: {result.status}")
-            print(f"Debug - result.status type: {type(result.status)}")
             
             if isinstance(result.status, dict) and 'SuccessValue' in result.status:
                 success_value = result.status['SuccessValue']

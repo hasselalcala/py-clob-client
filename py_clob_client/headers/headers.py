@@ -31,11 +31,6 @@ def create_level_1_headers(signer: Signer, nonce: int = None):
         POLY_NONCE: str(n),
     }
 
-    print("Debug - Headers being sent in local signer:")
-    print(f"POLY_ADDRESS: {headers[POLY_ADDRESS]}")
-    print(f"POLY_SIGNATURE: {headers[POLY_SIGNATURE]}")
-    print(f"POLY_TIMESTAMP: {headers[POLY_TIMESTAMP]}")
-    print(f"POLY_NONCE: {headers[POLY_NONCE]}")
     return headers
 
 

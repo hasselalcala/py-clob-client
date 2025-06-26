@@ -1,11 +1,9 @@
-
 from ..MPCSigner import MPCSigner
 from py_order_utils.model import EOA
 from ..clob_types import MarketOrderArgs, CreateOrderOptions, TickSize, RoundConfig, OrderType, OrderSummary
 from py_order_utils.model import SignedOrder, OrderData, BUY as UtilsBuy, SELL as UtilsSell
 from py_clob_client.config import get_contract_config
 from py_order_utils.builders import MpcOrderBuilder as UtilsMpcOrderBuilder
-from py_order_utils.MPCSigner import MPCSigner as UtilsMPCSigner
 from .constants import BUY, SELL
 from .helpers import (
     to_token_decimals,
@@ -36,7 +34,7 @@ class MPCOrderBuilder:
         # Defaults to the address of the signer
         self.funder = funder if funder is not None else self.signer.account_id
     
-    def create_market_order(
+    async def create_market_order(
         self, order_args: MarketOrderArgs, options: CreateOrderOptions
     ) -> SignedOrder:
         """
@@ -68,16 +66,16 @@ class MPCOrderBuilder:
             self.signer.get_chain_id(), options.neg_risk
         )
 
-        print("contract_config: ", contract_config)
+        print("->>>>> contract_config: ", contract_config)
 
         order_builder = UtilsMpcOrderBuilder(
             contract_config.exchange,
             self.signer.chain_id,
-            UtilsMPCSigner(key=self.signer.private_key),
+            self.signer, #<-- this is the MPCSigner instance and order builder expect a MPCSigner instance
         )
         
-        print ("order_builder: ", order_builder)
-        return order_builder.build_signed_order(data)
+        print ("\n\n->>>>> order_builder: ", order_builder)
+        return await order_builder.build_signed_order(data)
 
     def calculate_sell_market_price(
         self,
