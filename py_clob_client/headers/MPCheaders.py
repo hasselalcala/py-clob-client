@@ -16,7 +16,6 @@ async def create_level_1_headers(signer: MPCSigner, nonce: int = None):
     """
     Creates Level 1 Poly headers for a request
     """
-    print("method: create_level_1_headers")
     timestamp = int(datetime.now().timestamp())
 
     n = 0

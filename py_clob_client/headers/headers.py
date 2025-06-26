@@ -21,8 +21,6 @@ def create_level_1_headers(signer: Signer, nonce: int = None):
     n = 0
     if nonce is not None:
         n = nonce
-
-    
     signature = sign_clob_auth_message(signer, timestamp, n)
     headers = {
         POLY_ADDRESS: signer.address(),

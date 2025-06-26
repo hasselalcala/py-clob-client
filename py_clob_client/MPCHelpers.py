@@ -21,11 +21,6 @@ def validate_mpc_signature(hash_hex: str, mpc_signature: dict, expected_address:
     r_int = int(r_x, 16)
     s_int = int(s_scalar, 16)
     
-    print(f"Debug - r_point: {r_point}")
-    print(f"Debug - r_x: {r_x}")
-    print(f"Debug - s: {s_scalar}")
-    print(f"Debug - recovery_id: {recovery_id}")
-    
     # Recover the public key
     signature_obj = keys.Signature(vrs=(recovery_id, r_int, s_int))
     public_key = signature_obj.recover_public_key_from_msg_hash(bytes.fromhex(hash_hex))
@@ -34,7 +29,7 @@ def validate_mpc_signature(hash_hex: str, mpc_signature: dict, expected_address:
     recovered_address = public_key.to_checksum_address()
     
     is_valid = expected_address.lower() == recovered_address.lower()
-    print(f"is_valid: {is_valid}")
+    print(f"signature is_valid?: {is_valid}")
     return recovered_address
 
 def reconstruct_signature(signature):

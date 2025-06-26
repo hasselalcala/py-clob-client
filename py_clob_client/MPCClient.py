@@ -80,10 +80,8 @@ class MPCClobClient:
         Creates API creds if not already created for nonce, otherwise derives them
         """
         try:
-            print("Creating API creds")
             return await self.create_api_key(nonce)
         except:
-            print("Deriving API creds")
             return await self.derive_api_key(nonce)
     
     async def create_api_key(self, nonce: int = None) -> ApiCreds:
@@ -113,17 +111,14 @@ class MPCClobClient:
         """
         Level 1 Poly Auth
         """
-        #print("method: assert_level_1_auth")
-        #print("mode: ", self.mode)
+
         if self.mode < L1:
-            #print("L1_AUTH_UNAVAILABLE")
             raise PolyException(L1_AUTH_UNAVAILABLE)
         
     async def derive_api_key(self, nonce: int = None) -> ApiCreds:
         """
         Derives an already existing CLOB API key for the given address and nonce
         """
-        print("derive_api_key")
         self.assert_level_1_auth()
 
         endpoint = "{}{}".format(self.host, DERIVE_API_KEY)
@@ -147,7 +142,6 @@ class MPCClobClient:
         """
         Sets client api creds
         """
-        print("set_api_creds")
         self.creds = creds
         self.mode = self._get_client_mode()
 
@@ -160,7 +154,6 @@ class MPCClobClient:
         Creates and signs an order
         Level 1 Auth required
         """
-        print("method: create_market_order")
         self.assert_level_1_auth()
 
         # add resolve_order_options, or similar
@@ -204,7 +197,6 @@ class MPCClobClient:
     def __resolve_tick_size(
         self, token_id: str, tick_size: TickSize = None
     ) -> TickSize:
-        print("method: __resolve_tick_size")
         min_tick_size = self.get_tick_size(token_id)
         if tick_size is not None:
             if is_tick_size_smaller(tick_size, min_tick_size):
@@ -224,7 +216,6 @@ class MPCClobClient:
         """
         Calculates the matching price considering an amount and the current orderbook
         """
-        print("method: calculate_market_price")
         book = self.get_order_book(token_id)
         if book is None:
             raise Exception("no orderbook")

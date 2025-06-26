@@ -36,9 +36,6 @@ def request(endpoint: str, method: str, headers=None, data=None):
     try:
         headers = overloadHeaders(method, headers)
         
-        for key, value in headers.items():
-            print(f"  {key}: {value}")
-        
         resp = requests.request(
             method=method, url=endpoint, headers=headers, json=data if data else None
         )

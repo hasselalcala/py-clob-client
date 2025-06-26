@@ -40,7 +40,6 @@ class MPCOrderBuilder:
         """
         Creates and signs a market order
         """
-        print("method: create_market_order to sign")
         side, maker_amount, taker_amount = self.get_market_order_amounts(
             order_args.side,
             order_args.amount,
@@ -66,15 +65,12 @@ class MPCOrderBuilder:
             self.signer.get_chain_id(), options.neg_risk
         )
 
-        print("->>>>> contract_config: ", contract_config)
-
         order_builder = UtilsMpcOrderBuilder(
             contract_config.exchange,
             self.signer.chain_id,
             self.signer, #<-- this is the MPCSigner instance and order builder expect a MPCSigner instance
         )
-        
-        print ("\n\n->>>>> order_builder: ", order_builder)
+
         return await order_builder.build_signed_order(data)
 
     def calculate_sell_market_price(
@@ -100,7 +96,6 @@ class MPCOrderBuilder:
     def get_market_order_amounts(
         self, side: str, amount: float, price: float, round_config: RoundConfig
     ):
-        print("method: get_market_order_amounts")
         raw_price = round_normal(price, round_config.price)
 
         if side == UtilsBuy:

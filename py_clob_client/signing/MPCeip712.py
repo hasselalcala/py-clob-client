@@ -14,8 +14,7 @@ def get_clob_auth_domain(chain_id: int):
     return make_domain(name=CLOB_DOMAIN_NAME, version=CLOB_VERSION, chainId=chain_id)
 
 async def sign_clob_auth_message(signer: MPCSigner, timestamp: int, nonce: int) -> str:
-    print("method: sign_clob_auth_message")
-    
+
     clob_auth_msg = ClobAuth(
         address=signer.ota_account,
         timestamp=str(timestamp),
@@ -27,10 +26,8 @@ async def sign_clob_auth_message(signer: MPCSigner, timestamp: int, nonce: int) 
     # Remove the local signer and add the MPCSigner instance.
     # take the hash to send it to the MPCSigner
     hash_to_sign = keccak(clob_auth_msg.signable_bytes(get_clob_auth_domain(chain_id))).hex()
-    print("Hash to send to MPC: ", hash_to_sign)
 
     # Send the hash to the MPCSigner and the signature is returned 
     mpc_signature = await signer.sign(hash_to_sign)
-    print("mpc_signature from sign_clob_auth_message: ", mpc_signature)
 
     return mpc_signature
