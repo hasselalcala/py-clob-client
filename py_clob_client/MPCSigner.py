@@ -4,6 +4,7 @@ import base64
 import json
 from py_clob_client.MPCHelpers import validate_mpc_signature, reconstruct_signature
 from py_order_utils.utils import prepend_zx
+import logging
 
 class MPCSigner:
     def __init__(self, account_id: str, private_key: str, network: str, ota_account: str, chain_id: int, path: str):
@@ -15,6 +16,7 @@ class MPCSigner:
         self.signer_account = Account(self.account_id, self.private_key, self.network)
         self.chain_id = chain_id
         self.path = path
+        self.logger = logging.getLogger(__name__)
 
     async def startup(self):
         """Initialize the account connection"""
