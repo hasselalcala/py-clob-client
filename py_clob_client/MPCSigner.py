@@ -7,7 +7,7 @@ from py_order_utils.utils import prepend_zx
 import logging
 
 class MPCSigner:
-    def __init__(self, account_id: str, private_key: str, network: str, ota_account: str, chain_id: int, path: str):
+    def __init__(self, account_id: str, private_key: str, network: str, ota_account: str, chain_id: int, path: str, contract_account: str):
 
         self.account_id = account_id
         self.private_key = private_key
@@ -17,6 +17,7 @@ class MPCSigner:
         self.chain_id = chain_id
         self.path = path
         self.logger = logging.getLogger(__name__)
+        self.contract_account = contract_account
 
     async def startup(self):
         """Initialize the account connection"""
@@ -29,7 +30,7 @@ class MPCSigner:
         Signs a message hash
         """
         result = await self.signer_account.function_call(
-            'polymarket_agent.testnet',
+            self.contract_account,
             "sign_hash",
             {"hash": message_hash, "path": self.path},
             gas=300000000000000,

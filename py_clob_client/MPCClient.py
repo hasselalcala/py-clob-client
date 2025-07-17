@@ -21,6 +21,7 @@ class MPCClobClient:
         agent_private_key: str = None,
         agent_near_network: str = None,
         path: str = None,
+        contract_account: str = None,
     ):
         """
         Initializes the clob client
@@ -50,8 +51,9 @@ class MPCClobClient:
             agent_near_network, 
             funder,  # ota_account
             chain_id,  # add chain_id
-            path  # add path
-        ) if agent_account and agent_private_key and agent_near_network and path else None
+            path,  # add path
+            contract_account
+        ) if agent_account and agent_private_key and agent_near_network and path and contract_account else None
         # print(f"Debug - mpc_signer created: {self.mpc_signer is not None}")
         
         self.mode = self._get_client_mode()
