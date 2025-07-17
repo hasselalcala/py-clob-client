@@ -15,7 +15,7 @@ class MPCClobClient:
         self,
         host,
         chain_id: int = None,
-        signature_type: int = None, # Search in the code how to define this data because it will always be EOA and the credentials will not be sent because they must always be calculated
+        signature_type: int = None, 
         funder: str = None, # define the funder as the OTA account
         agent_account: str = None,
         agent_private_key: str = None,
@@ -39,25 +39,19 @@ class MPCClobClient:
         self.chain_id = chain_id
         self.creds = None
         
-        # Debug
-        # print(f"Debug - agent_account: {agent_account}")
-        # print(f"Debug - agent_private_key: {'SET' if agent_private_key else 'NOT SET'}")
-        # print(f"Debug - agent_near_network: {agent_near_network}")
-        # print(f"Debug - path: {path}")
-        
         self.mpc_signer = MPCSigner(
             agent_account, 
             agent_private_key, 
             agent_near_network, 
             funder,  # ota_account
-            chain_id,  # add chain_id
-            path,  # add path
+            chain_id,  
+            path,  
             contract_account
         ) if agent_account and agent_private_key and agent_near_network and path and contract_account else None
-        # print(f"Debug - mpc_signer created: {self.mpc_signer is not None}")
+        
         
         self.mode = self._get_client_mode()
-        # print(f"Debug - mode: {self.mode}")
+       
 
         if self.mpc_signer:
             self.builder = MPCOrderBuilder(
@@ -94,10 +88,10 @@ class MPCClobClient:
 
         endpoint = "{}{}".format(self.host, CREATE_API_KEY)
         headers = await create_level_1_headers(self.mpc_signer, nonce)
-        #print("\nDebug - Headers created successfully creating a key")
+        
 
         creds_raw = post(endpoint, headers=headers)
-        #print("\nDebug - Creds raw when creating a key: ", creds_raw)
+      
         try:
             creds = ApiCreds(
                 api_key=creds_raw["apiKey"],
@@ -125,10 +119,10 @@ class MPCClobClient:
 
         endpoint = "{}{}".format(self.host, DERIVE_API_KEY)
         headers = await create_level_1_headers(self.mpc_signer, nonce)
-        #print("\nDebug - Headers created successfully deriving a key")
+       
 
         creds_raw = get(endpoint, headers=headers)
-        #print("\nDebug - Creds raw when deriving a key: ", creds_raw)
+        
         try:
             creds = ApiCreds(
                 api_key=creds_raw["apiKey"],
