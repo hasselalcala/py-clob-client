@@ -48,7 +48,7 @@ class MPCClobClient:
         print("agent_near_network", agent_near_network)
         print("path", path)
         print("contract_account", contract_account)
-        print("mpc_signer", self.mpc_signer)
+        
         
         self.mpc_signer = MPCSigner(
             agent_account, 
