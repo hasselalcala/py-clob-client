@@ -38,6 +38,17 @@ class MPCClobClient:
         self.host = host[0:-1] if host.endswith("/") else host
         self.chain_id = chain_id
         self.creds = None
+
+        print("->>DEBUG: host", host)
+        print("chain_id", chain_id)
+        print("signature_type", signature_type)
+        print("funder", funder)
+        print("agent_account", agent_account)
+        print("agent_private_key", agent_private_key)
+        print("agent_near_network", agent_near_network)
+        print("path", path)
+        print("contract_account", contract_account)
+        print("mpc_signer", self.mpc_signer)
         
         self.mpc_signer = MPCSigner(
             agent_account, 
@@ -49,6 +60,7 @@ class MPCClobClient:
             contract_account
         ) if agent_account and agent_private_key and agent_near_network and path and contract_account else None
         
+        print("->>mpc_signer", self.mpc_signer)
         
         self.mode = self._get_client_mode()
        

@@ -11,7 +11,7 @@ class MPCSigner:
 
         self.account_id = account_id
         self.private_key = private_key
-        self.network = "https://near.drpc.org" if network == "mainnet" else "https://test.rpc.fastnear.com"
+        self.network = "https://1rpc.io/near" if network == "mainnet" else "https://test.rpc.fastnear.com"
         self.ota_account = ota_account
         self.signer_account = Account(self.account_id, self.private_key, self.network)
         self.chain_id = chain_id
