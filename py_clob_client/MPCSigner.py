@@ -22,7 +22,7 @@ class MPCSigner:
     async def startup(self):
         """Initialize the account connection"""
         await self.signer_account.startup()
-        self.logger.info(f"Near MPC Signer initialized for account: {self.account_id}")
+        print(f"Near MPC Signer initialized for account: {self.account_id}")
     
     async def sign(self, message_hash):
         

@@ -1,7 +1,7 @@
 from ..MPCSigner import MPCSigner
 from py_order_utils.model import EOA
 from ..clob_types import MarketOrderArgs, CreateOrderOptions, TickSize, RoundConfig, OrderType, OrderSummary
-from py_order_utils.model import SignedOrder, OrderData
+from py_order_utils.model import SignedOrder, OrderData, BUY as UtilsBuy, SELL as UtilsSell
 from py_clob_client.config import get_contract_config
 from py_order_utils.builders import MpcOrderBuilder as UtilsMpcOrderBuilder
 from .constants import BUY, SELL
@@ -13,9 +13,7 @@ from .helpers import (
     round_up,
 )
 
-# Usar las mismas constantes de strings para consistencia
-UtilsBuy = BUY
-UtilsSell = SELL
+from py_order_utils.model.sides import BUY as UtilsBuy, SELL as UtilsSell
 
 ROUNDING_CONFIG: dict[TickSize, RoundConfig] = {
     "0.1": RoundConfig(price=1, size=2, amount=3),
