@@ -93,6 +93,26 @@ class MPCOrderBuilder:
 
         return float(positions[0].price)
     
+    def calculate_buy_market_price(
+        self,
+        positions: list[OrderSummary],
+        amount_to_match: float,
+        order_type: OrderType,
+    ) -> float:
+        if not positions:
+            raise Exception("no match")
+
+        sum = 0
+        for p in reversed(positions):
+            sum += float(p.size) * float(p.price)
+            if sum >= amount_to_match:
+                return float(p.price)
+
+        if order_type == OrderType.FOK:
+            raise Exception("no match")
+
+        return float(positions[0].price)
+    
     def get_market_order_amounts(
         self, side: str, amount: float, price: float, round_config: RoundConfig
     ):
